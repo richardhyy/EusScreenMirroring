@@ -1,12 +1,12 @@
-name: EusRemoteDesktop
+name: EusScreenMirroring
 version: ${project.version}
-main: cc.eumc.eusremotedesktop.EusRemoteDesktop
+main: cc.eumc.screenmirroring.EusScreenMirroring
 api-version: 1.17
 depend: [ EusMapDisplay ]
 authors: [ EucalyptusLeaves ]
 website: www.eumc.cc
 commands:
-  remotedesktop:
+  screenmirroring:
 permissions:
-  remotedesktop.use:
-    description: Permission for accessing remote desktop
+  screenmirroring.use:
+    description: Permission for accessing screen mirroring

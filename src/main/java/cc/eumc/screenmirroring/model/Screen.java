@@ -1,4 +1,4 @@
-package cc.eumc.eusremotedesktop.model;
+package cc.eumc.screenmirroring.model;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;

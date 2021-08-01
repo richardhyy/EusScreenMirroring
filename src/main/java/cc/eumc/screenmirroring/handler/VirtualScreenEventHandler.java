@@ -1,4 +1,4 @@
-package cc.eumc.eusremotedesktop.handler;
+package cc.eumc.screenmirroring.handler;
 
 import cc.eumc.eusmapdisplay.event.DisplayEventHandler;
 import cc.eumc.eusmapdisplay.model.MapDisplay;

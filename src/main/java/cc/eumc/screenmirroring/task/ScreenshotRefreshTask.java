@@ -1,20 +1,20 @@
-package cc.eumc.eusremotedesktop.task;
+package cc.eumc.screenmirroring.task;
 
 import cc.eumc.eusmapdisplay.model.MapDisplay;
-import cc.eumc.eusremotedesktop.EusRemoteDesktop;
-import cc.eumc.eusremotedesktop.model.Screen;
+import cc.eumc.screenmirroring.EusScreenMirroring;
+import cc.eumc.screenmirroring.model.Screen;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ScreenshotRefreshTask implements Runnable {
-    EusRemoteDesktop eusRemoteDesktop;
+    EusScreenMirroring eusScreenMirroring;
     MapDisplay mapDisplay;
 
     boolean working = false;
 
-    public ScreenshotRefreshTask(EusRemoteDesktop eusRemoteDesktop, MapDisplay mapDisplay) {
-        this.eusRemoteDesktop = eusRemoteDesktop;
+    public ScreenshotRefreshTask(EusScreenMirroring eusScreenMirroring, MapDisplay mapDisplay) {
+        this.eusScreenMirroring = eusScreenMirroring;
         this.mapDisplay = mapDisplay;
     }
 
@@ -25,7 +25,7 @@ public class ScreenshotRefreshTask implements Runnable {
         }
 
         working = true;
-        Screen screen = eusRemoteDesktop.getScreen();
+        Screen screen = eusScreenMirroring.getScreen();
         if (screen == null) {
             return;
         }
@@ -37,7 +37,7 @@ public class ScreenshotRefreshTask implements Runnable {
             BufferedImage image = robot.createScreenCapture(capture);
 
             screen.setScreenshot(image);
-            mapDisplay.getDisplay().plotImage(0, 0, screen.getScreenshot(), null);
+            mapDisplay.getDisplay().drawImage(0, 0, screen.getScreenshot(), null);
         } catch (AWTException e) {
             e.printStackTrace();
         }

@@ -1,12 +1,12 @@
-package cc.eumc.eusremotedesktop;
+package cc.eumc.screenmirroring;
 
 import cc.eumc.eusmapdisplay.EusMapDisplay;
-import cc.eumc.eusremotedesktop.command.RemoteDesktopCommand;
-import cc.eumc.eusremotedesktop.model.Screen;
-import cc.eumc.eusremotedesktop.task.ScreenshotRefreshTask;
+import cc.eumc.screenmirroring.command.RemoteDesktopCommand;
+import cc.eumc.screenmirroring.model.Screen;
+import cc.eumc.screenmirroring.task.ScreenshotRefreshTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class EusRemoteDesktop extends JavaPlugin {
+public final class EusScreenMirroring extends JavaPlugin {
     private EusMapDisplay eusMapDisplayPlugin;
     private ScreenshotRefreshTask screenshotRefreshTask;
     private Screen screen = null;
@@ -20,7 +20,7 @@ public final class EusRemoteDesktop extends JavaPlugin {
             setEnabled(false);
         }
 
-        getServer().getPluginCommand("remotedesktop").setExecutor(new RemoteDesktopCommand(this));
+        getServer().getPluginCommand("screenmirroring").setExecutor(new RemoteDesktopCommand(this));
     }
 
     @Override

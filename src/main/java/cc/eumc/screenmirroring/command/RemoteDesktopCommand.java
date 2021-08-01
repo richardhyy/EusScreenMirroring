@@ -1,31 +1,23 @@
-package cc.eumc.eusremotedesktop.command;
+package cc.eumc.screenmirroring.command;
 
 import cc.eumc.eusmapdisplay.EusMapDisplay;
 import cc.eumc.eusmapdisplay.event.DisplayEventHandler;
 import cc.eumc.eusmapdisplay.manager.GlobalMapManager;
 import cc.eumc.eusmapdisplay.model.MapDisplay;
-import cc.eumc.eusremotedesktop.EusRemoteDesktop;
-import cc.eumc.eusremotedesktop.model.Screen;
-import cc.eumc.eusremotedesktop.task.ScreenshotRefreshTask;
+import cc.eumc.screenmirroring.EusScreenMirroring;
+import cc.eumc.screenmirroring.model.Screen;
+import cc.eumc.screenmirroring.task.ScreenshotRefreshTask;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.map.MapPalette;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class RemoteDesktopCommand implements CommandExecutor {
-    EusRemoteDesktop plugin;
+    EusScreenMirroring plugin;
 
-    public RemoteDesktopCommand(EusRemoteDesktop plugin) {
+    public RemoteDesktopCommand(EusScreenMirroring plugin) {
         this.plugin = plugin;
     }
 
