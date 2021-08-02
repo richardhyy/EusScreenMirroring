@@ -38,7 +38,7 @@ public class Mirror {
         refID.set(id);
         this.mirrorMetafile = new File(mirrorFolder, id + ".json");
 
-        System.out.printf("New mirror (%s)%n", mirrorMetafile.getName());
+        //System.out.printf("New mirror (%s)%n", mirrorMetafile.getName());
 
         try {
             save();
@@ -88,7 +88,7 @@ public class Mirror {
     }
 
     public void setMapDisplay(MapDisplay mapDisplay) {
-        System.out.printf("Bound w/ %s%n", mapDisplay.getUniqueId());
+//        System.out.printf("Bound w/ %s%n", mapDisplay.getUniqueId());
 
         this.mapDisplay = mapDisplay;
         this.windowWidth = mapDisplay.getWindowWidth();

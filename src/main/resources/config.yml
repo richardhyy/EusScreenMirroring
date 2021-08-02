@@ -1,5 +1,6 @@
 General:
   ScreenServerPorts: [17211]
+  PrintScreenServerError: false
 Security:
   MaxRetry: 3
   BanTime: 600

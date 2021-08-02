@@ -7,6 +7,7 @@ import cc.eumc.screenmirroring.manager.ScreenServerManager;
 import cc.eumc.screenmirroring.task.ScreenUpdateTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -64,7 +65,26 @@ public final class EusScreenMirroring extends JavaPlugin {
         mirrorManager.saveAll();
     }
 
+    public void sendSevere(String message) {
+        Bukkit.getServer().getLogger().severe(prefixForEachLine(message));
+    }
 
+    public void sendWarn(String message) {
+        Bukkit.getServer().getLogger().warning(prefixForEachLine(message));
+    }
+
+    public void sendInfo(String message) {
+        Bukkit.getServer().getLogger().info(prefixForEachLine(message));
+    }
+
+    public String prefixForEachLine(String text) {
+        String prefix = "[ScreenMirroring] ";
+        String[] lines = text.split("\n");
+        for (int i=0; i<lines.length; i++) {
+            lines[i] = prefix + lines[i];
+        }
+        return String.join("\n", lines);
+    }
 
     public EusMapDisplay getEusMapDisplayPlugin() {
         return eusMapDisplayPlugin;

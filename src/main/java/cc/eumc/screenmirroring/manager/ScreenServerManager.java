@@ -22,7 +22,7 @@ public class ScreenServerManager {
         int succeeded = 0;
         for (int port : plugin.getConfig().getIntegerList("General.ScreenServerPorts")) {
             try {
-                ScreenServer _server = new ScreenServer(plugin.getMirrorManager(), port);
+                ScreenServer _server = new ScreenServer(plugin, plugin.getMirrorManager(), port);
                 _server.start();
                 screenServerList.add(_server);
                 System.out.println("Listening on " + port);
