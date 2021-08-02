@@ -2,6 +2,7 @@ package cc.eumc.screenmirroringclient;
 
 import cc.eumc.screenmirroringclient.model.RemoteMirror;
 import cc.eumc.screenmirroringclient.model.Screen;
+import cc.eumc.screenmirroringclient.timer.MouseTrackTimer;
 import cc.eumc.screenmirroringclient.timer.ScreenShotTimer;
 
 import java.awt.*;
@@ -9,33 +10,43 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.Timer;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Main {
     UdpClient client;
     Timer timer;
-    ScreenSender screenSender;
+    DataSender dataSender;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Address: ");
         String address = scanner.next();
-        new Main(address, 17211);
+        new Main(address, 17211, 4 * 128, 3 * 128);
     }
 
-    Main(String address, int port) {
+    Main(String address, int port, int remoteScreenWidth, int remoteScreenHeight) {
         try {
             this.client = new UdpClient(InetAddress.getByName(address), port);
             this.timer = new Timer();
-            this.screenSender = new ScreenSender(client, new RemoteMirror((short) 0, "867740"));
-            screenSender.start();
+            this.dataSender = new DataSender(client, new RemoteMirror((short) 0, "867740"));
+            dataSender.start();
 
-            timer.schedule(new ScreenShotTimer(4 * 128, 3 * 128, new Consumer<Screen>() {
+            Screen screen = new Screen(remoteScreenWidth, remoteScreenHeight);
+
+            timer.schedule(new ScreenShotTimer(screen, new Consumer<Screen>() {
                 @Override
                 public void accept(Screen screen) {
-                    screenSender.sendScreen(screen);
+                    dataSender.sendScreen(screen);
                 }
             }), 1, 500);
+
+            timer.schedule(new MouseTrackTimer(screen, new BiConsumer<Screen, int[]>() {
+                @Override
+                public void accept(Screen screen, int[] onRemoteScreenCoordinates) {
+                    dataSender.sendMouseCoordinates((short)onRemoteScreenCoordinates[0], (short)onRemoteScreenCoordinates[1]);
+                }
+            }), 1, 50);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (AWTException e) {

@@ -8,13 +8,13 @@ import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class ScreenSender extends Thread {
+public class DataSender extends Thread {
     private final UdpClient client;
     private final RemoteMirror mirror;
     private boolean running = true;
     private final Queue<byte[]> pendingData = new ConcurrentLinkedQueue<>();
 
-    public ScreenSender(UdpClient client, RemoteMirror mirror) {
+    public DataSender(UdpClient client, RemoteMirror mirror) {
         this.client = client;
         this.mirror = mirror;
     }
@@ -45,6 +45,10 @@ public class ScreenSender extends Thread {
             int startAt = i * PacketBuilder.MAX_PIXEL_LENGTH;
             pendingData.add(PacketBuilder.createPutPixelPacket(mirror.getId(), mirror.getPassword(), startAt, Arrays.copyOfRange(pixels, startAt, Math.min(pixels.length, startAt + PacketBuilder.MAX_PIXEL_LENGTH))));
         }
+    }
+
+    public void sendMouseCoordinates(short x, short y) {
+        pendingData.add(PacketBuilder.createMoveCursorPacket(mirror.getId(), mirror.getPassword(), x, y));
     }
 
     public void stopSending() {

@@ -14,9 +14,9 @@ public class ScreenShotTimer extends TimerTask {
 
     boolean working = false;
 
-    public ScreenShotTimer(int remoteScreenWidth, int remoteScreenHeight, Consumer<Screen> afterScreenshotSet) throws AWTException {
+    public ScreenShotTimer(Screen screen, Consumer<Screen> afterScreenshotSet) throws AWTException {
         this.robot = new Robot();
-        this.screen = new Screen(remoteScreenWidth, remoteScreenHeight);
+        this.screen = screen;
         this.callback = afterScreenshotSet;
     }
 
