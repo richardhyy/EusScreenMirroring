@@ -22,7 +22,17 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Address: ");
         String address = scanner.next();
-        new Main(address, 17211, 4 * 128, 3 * 128);
+
+        System.out.print("Port (default: 17211): ");
+        int port = scanner.nextInt();
+
+        System.out.print("Mirror width (default: 4): ");
+        int windowWidth = scanner.nextInt();
+
+        System.out.print("Mirror width (default: 3): ");
+        int windowHeight = scanner.nextInt();
+
+        new Main(address, port, windowWidth * 128, windowHeight * 128);
     }
 
     Main(String address, int port, int remoteScreenWidth, int remoteScreenHeight) {
