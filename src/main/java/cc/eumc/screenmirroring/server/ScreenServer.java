@@ -42,8 +42,8 @@ public class ScreenServer extends Thread {
             byte[] received = packet.getData();
 
             /* Format:
-            <2bytes: ID> | <6bytes: Password> | <1byte: Action> | <1012bytes: Data> | <3bytes: END>
-            0          1 | 2                7 | 8             8 | 9            1020 | 1021     1023
+            <2bytes: ID> | <6bytes: Password> | <1byte: Action> | <1015bytes: Data>
+            0          1 | 2                7 | 8             8 | 9            1023
              */
 
             short id = NumericUtil.bytesToShort(Arrays.copyOfRange(received, 0, 2));
@@ -74,8 +74,9 @@ public class ScreenServer extends Thread {
                     byte[] pixels = Arrays.copyOfRange(received, 15, 15 + length);
 //                    if (mirror.getScreen().getLength() < startAt + length) {
 //                    }
-                    mirror.getScreen().fillPixels(startAt, pixels);
                     System.out.printf("Start At: %d,  Length: %d,  Actual Length: %d%n", startAt, length, pixels.length);
+
+                    mirror.getScreen().fillPixels(startAt, pixels);
                 }
                 case 1 -> { // Move cursor
                     /* Format
