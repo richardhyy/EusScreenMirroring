@@ -26,23 +26,31 @@ public class Main {
         System.out.print("Port (default: 17211): ");
         int port = scanner.nextInt();
 
+
         System.out.print("Mirror width (default: 4): ");
         int windowWidth = scanner.nextInt();
 
         System.out.print("Mirror width (default: 3): ");
         int windowHeight = scanner.nextInt();
 
-        new Main(address, port, windowWidth * 128, windowHeight * 128);
+        Screen screen = new Screen(windowWidth * 128, windowHeight * 128);
+
+
+        System.out.print("Mirror ID: ");
+        short id = (short)scanner.nextInt();
+
+        System.out.print("Password: ");
+        String password = scanner.next();
+
+        new Main(address, port, screen, id, password);
     }
 
-    Main(String address, int port, int remoteScreenWidth, int remoteScreenHeight) {
+    Main(String address, int port, Screen screen, short id, String password) {
         try {
             this.client = new UdpClient(InetAddress.getByName(address), port);
             this.timer = new Timer();
-            this.dataSender = new DataSender(client, new RemoteMirror((short) 0, "867740"));
+            this.dataSender = new DataSender(client, new RemoteMirror(id, password));
             dataSender.start();
-
-            Screen screen = new Screen(remoteScreenWidth, remoteScreenHeight);
 
             timer.schedule(new ScreenShotTimer(screen, new Consumer<Screen>() {
                 @Override
