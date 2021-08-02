@@ -27,7 +27,7 @@ public class DataSender extends Thread {
                 try {
                     client.send(data);
 
-                    System.out.print(".");
+//                    System.out.print(".");
 
                 } catch (IOException e) {
                     e.printStackTrace();

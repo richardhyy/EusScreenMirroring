@@ -36,7 +36,7 @@ public class Screen {
             after = scaleOp.filter(screenshot, after);
             this.screenshot = after;
         }
-        System.out.println("%d x %d".formatted(this.screenshot.getWidth(), this.screenshot.getHeight()));
+//        System.out.println("%d x %d".formatted(this.screenshot.getWidth(), this.screenshot.getHeight()));
         this.flattenedPixels = MapPalette.imageToBytes(this.screenshot);
     }
 
