@@ -8,6 +8,9 @@
 - Password protection
 - _(WIP) Ban IP if failed verifying for too many times_
 
+## Screenshot
+![Demo](image/demo_screenmirroring.gif)
+
 ## Commands
 
 | Command                                                      | Description                                                  | Permission           |
