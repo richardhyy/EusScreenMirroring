@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -89,6 +90,9 @@ public class Mirror {
 
     public void setMapDisplay(MapDisplay mapDisplay) {
 //        System.out.printf("Bound w/ %s%n", mapDisplay.getUniqueId());
+
+        // Remove default eventhandler so the cursor won't move by being targeted
+        Arrays.stream(mapDisplay.getEventHandlers()).forEach(mapDisplay::removeEventHandler);
 
         this.mapDisplay = mapDisplay;
         this.windowWidth = mapDisplay.getWindowWidth();
