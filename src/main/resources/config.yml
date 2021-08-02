@@ -1,0 +1,5 @@
+General:
+  ScreenServerPorts: [17211]
+Security:
+  MaxRetry: 3
+  BanTime: 600

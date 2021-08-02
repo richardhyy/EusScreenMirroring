@@ -8,5 +8,6 @@ website: www.eumc.cc
 commands:
   screenmirroring:
 permissions:
-  screenmirroring.use:
+  screenmirroring.user:
+    default: op
     description: Permission for accessing screen mirroring
