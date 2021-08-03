@@ -5,10 +5,15 @@ import cc.eumc.eusmapdisplay.model.MapDisplay;
 import cc.eumc.screenmirroring.EusScreenMirroring;
 import com.google.gson.stream.JsonReader;
 import org.bukkit.Bukkit;
+import org.bukkit.map.MapPalette;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Random;
@@ -98,8 +103,32 @@ public class Mirror {
         this.windowWidth = mapDisplay.getWindowWidth();
         this.windowHeight = mapDisplay.getWindowHeight();
         this.mapDisplayUUID = mapDisplay.getUniqueId().toString();
+
+        drawDisconnectedScreen();
     }
 
+    public void drawDisconnectedScreen() {
+        screen.fill((byte) 34);
+        mapDisplay.getDisplay().setCursorLocation(screen.getWidth(), screen.getHeight());
+
+        try {
+            InputStream in = EusScreenMirroring.getInstance().getResource("disconnected.jpg");
+            assert in != null;
+            BufferedImage icon = ImageIO.read(in);
+            if (icon != null) {
+                int iconLeft = screen.getWidth() / 2 - icon.getWidth() / 2;
+                int iconTop = screen.getHeight() / 2 - icon.getHeight() / 2;
+                for (int y = 0; y < icon.getHeight(); y++) {
+                    for (int x = 0; x < icon.getWidth(); x++) {
+                        Color pixelColor = new Color(icon.getRGB(x, y));
+                        screen.setPixel(iconLeft + x, iconTop + y, MapPalette.matchColor(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Reset the Mirror's password to a new six-digit one

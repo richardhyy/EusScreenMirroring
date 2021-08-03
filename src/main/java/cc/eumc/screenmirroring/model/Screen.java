@@ -19,6 +19,14 @@ public class Screen {
         this.pixels = new byte[length];
     }
 
+    public void fill(byte value) {
+        Arrays.fill(pixels, value);
+    }
+
+    public void setPixel(int x, int y, byte value) {
+        pixels[width * y + x] = value;
+    }
+
     public void fillPixels(int startIndex, byte[] pixels) {
         System.arraycopy(pixels, 0, this.pixels, startIndex, pixels.length);
     }
