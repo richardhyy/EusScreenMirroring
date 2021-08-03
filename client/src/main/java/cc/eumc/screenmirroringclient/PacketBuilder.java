@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 public class PacketBuilder {
     public static final byte PUT_PIXELS = 0;
     public static final byte MOVE_CURSOR = 1;
+    public static final byte SHOW_DISCONNECT_SCREEN = 2;
 
     public static final int MAX_PIXEL_LENGTH = 1009;
 
@@ -61,5 +62,15 @@ public class PacketBuilder {
         //noinspection SuspiciousNameCombination
         System.arraycopy(NumericUtil.shortToBytes(y), 0, data, 11, 2);
         return data;
+    }
+
+    /**
+     * Ask the server to show a blank screen with disconnect icon
+     * @param mirrorID
+     * @param password
+     * @return
+     */
+    public static byte[] createShowDisconnectScreenPacket(short mirrorID, String password) {
+        return createBasePacket(mirrorID, password, SHOW_DISCONNECT_SCREEN);
     }
 }

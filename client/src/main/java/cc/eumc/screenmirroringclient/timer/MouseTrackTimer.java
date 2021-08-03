@@ -11,6 +11,7 @@ public class MouseTrackTimer extends TimerTask {
     BiConsumer<Screen, int[]> callback;
 
     boolean working = false;
+    boolean paused = false;
 
     public MouseTrackTimer(Screen screen, BiConsumer<Screen, int[]> afterMouseLocationUpdate) {
         this.screen = screen;
@@ -19,7 +20,7 @@ public class MouseTrackTimer extends TimerTask {
 
     @Override
     public void run() {
-        if (working) {
+        if (working || paused) {
             return;
         }
         working = true;
@@ -28,5 +29,13 @@ public class MouseTrackTimer extends TimerTask {
         callback.accept(screen, screen.toScaledScreenCoordinates(mouseLocation.x, mouseLocation.y));
 
         working = false;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 }

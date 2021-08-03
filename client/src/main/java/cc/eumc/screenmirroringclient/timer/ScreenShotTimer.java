@@ -13,6 +13,7 @@ public class ScreenShotTimer extends TimerTask {
     Consumer<Screen> callback;
 
     boolean working = false;
+    boolean paused = false;
 
     public ScreenShotTimer(Screen screen, Consumer<Screen> afterScreenshotSet) throws AWTException {
         this.robot = new Robot();
@@ -22,7 +23,7 @@ public class ScreenShotTimer extends TimerTask {
 
     @Override
     public void run() {
-        if (working) {
+        if (working || paused) {
             return;
         }
         working = true;
@@ -34,5 +35,13 @@ public class ScreenShotTimer extends TimerTask {
 
         this.callback.accept(screen);
         working = false;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 }
