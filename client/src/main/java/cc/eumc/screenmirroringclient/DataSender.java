@@ -5,6 +5,8 @@ import cc.eumc.screenmirroringclient.model.Screen;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -14,6 +16,7 @@ public class DataSender extends Thread {
     private boolean running = true;
     private boolean clearing = false;
     private final Queue<byte[]> pendingData = new ConcurrentLinkedQueue<>();
+    private final Map<Integer, byte[]> latestPixels = new HashMap<>();
 
     public DataSender(UdpClient client, RemoteMirror mirror) {
         this.client = client;
@@ -48,7 +51,13 @@ public class DataSender extends Thread {
                 clearing = false;
                 break;
             } else {
-                pendingData.add(PacketBuilder.createPutPixelPacket(mirror.getId(), mirror.getPassword(), startAt, Arrays.copyOfRange(pixels, startAt, Math.min(pixels.length, startAt + PacketBuilder.MAX_PIXEL_LENGTH))));
+                byte[] lastPixels = latestPixels.get(i);
+                byte[] newPixels = Arrays.copyOfRange(pixels, startAt, Math.min(pixels.length, startAt + PacketBuilder.MAX_PIXEL_LENGTH));
+                if (lastPixels == null || !Arrays.equals(lastPixels, newPixels)) {
+                    // Only send put pixel request when screen content changes
+                    pendingData.add(PacketBuilder.createPutPixelPacket(mirror.getId(), mirror.getPassword(), startAt, newPixels));
+                    latestPixels.put(i, newPixels);
+                }
             }
         }
     }
