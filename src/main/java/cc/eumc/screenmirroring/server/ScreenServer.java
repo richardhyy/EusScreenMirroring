@@ -97,6 +97,12 @@ public class ScreenServer extends Thread {
                         short y = NumericUtil.bytesToShort(Arrays.copyOfRange(received, 11, 13));
                         mirror.getMapDisplay().getDisplay().setCursorLocation(x, y);
                     }
+                    case 2 -> { // Show disconnect screen
+                    /* Format
+                    <empty>
+                     */
+                        mirror.drawDisconnectedScreen();
+                    }
                 }
             } catch (Exception e) {
                 if (showError) {
