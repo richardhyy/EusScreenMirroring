@@ -100,7 +100,7 @@ public class UserCommand implements CommandExecutor, TabCompleter {
                     Mirror mirror = plugin.getMirrorManager().getMirror(id);
 
                     if (mirror == null) {
-                        sendMessage(sender, String.format("Mirro %s does not exist.", id));
+                        sendMessage(sender, String.format("Mirror %s does not exist.", id));
                         return true;
                     }
 
