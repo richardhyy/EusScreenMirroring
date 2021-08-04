@@ -11,7 +11,7 @@
 
 
 ## Client
-[Click here for client explanation](tree/master/client)
+[Click here for client explanation](https://github.com/richardhyy/EusScreenMirroring/tree/master/client)
 
 
 ## Demo
