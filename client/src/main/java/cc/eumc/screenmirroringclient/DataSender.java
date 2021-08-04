@@ -73,6 +73,7 @@ public class DataSender extends Thread {
     public void clearPending() {
         clearing = true;
         pendingData.clear();
+        latestPixels.clear();
     }
 
     public void stopSending() {
