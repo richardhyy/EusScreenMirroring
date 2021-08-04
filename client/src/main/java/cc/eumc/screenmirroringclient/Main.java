@@ -4,6 +4,7 @@ import cc.eumc.screenmirroringclient.model.RemoteMirror;
 import cc.eumc.screenmirroringclient.model.Screen;
 import cc.eumc.screenmirroringclient.timer.MouseTrackTimer;
 import cc.eumc.screenmirroringclient.timer.ScreenShotTimer;
+import cc.eumc.screenmirroringclient.util.ArgumentParser;
 
 import java.awt.*;
 import java.net.InetAddress;
@@ -14,6 +15,19 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Main {
+    final static String HelpText = """
+            --address | -a : Server address (without port)
+            --port | -p    : EusScreenMirroring port (EusScreenMirroring default: 17211)
+            --width | -w   : Display window width
+            --height | -h  : Display window height
+            --id | -i      : Mirror ID (Get by using /screenmirroring list)
+            --password | -d: Mirror password (Get by using /screenmirroring list)
+            
+            Optional arguments:
+            --screenshotRefreshInterval      : Time interval between screenshot refreshes (in milliseconds)
+            --mouseCoordinateRefreshInterval : Time interval between mouse location refreshes (in milliseconds)
+            """;
+
     UdpClient client;
     Timer timer;
     DataSender dataSender;
@@ -21,34 +35,76 @@ public class Main {
     MouseTrackTimer mouseTrackTimer;
     ScreenShotTimer screenShotTimer;
 
+    @SuppressWarnings("ConstantConditions")
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Address: ");
-        String address = scanner.next();
+        String address;
+        int port;
+        int windowWidth;
+        int windowHeight;
+        short id;
+        String password;
+        long screenshotRefreshInterval = 500;
+        long mouseCoordinateRefreshInterval = 50;
 
-        System.out.print("Port (default: 17211): ");
-        int port = scanner.nextInt();
+        if (args.length > 0) {
+            // with arguments
+            ArgumentParser argumentParser = new ArgumentParser(args);
+            if (argumentParser.checkSwitch("--help")) {
+                System.out.println(Main.HelpText);
+                return;
+            }
+            try {
+                address = argumentParser.parse("--address", "-a");
+                port = Integer.parseInt(argumentParser.parse("--port", "-p"));
+                windowWidth = Integer.parseInt(argumentParser.parse("--width", "-w"));
+                windowHeight = Integer.parseInt(argumentParser.parse("--height", "-h"));
+                id = Short.parseShort(argumentParser.parse("--id", "-i"));
+                password = argumentParser.parse("--password", "-d");
+
+                // optionals
+                String screenshotRefreshIntervalString = argumentParser.parse("--screenshotRefreshInterval");
+                String mouseCoordinateRefreshIntervalString = argumentParser.parse("--mouseCoordinateRefreshInterval");
+                if (screenshotRefreshIntervalString != null) {
+                    screenshotRefreshInterval = Long.parseLong(screenshotRefreshIntervalString);
+                }
+                if (mouseCoordinateRefreshIntervalString != null) {
+                    mouseCoordinateRefreshInterval = Long.parseLong(mouseCoordinateRefreshIntervalString);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.printf("** Error parsing arguments, caused by %s **%n", e.getMessage());
+                return;
+            }
+        } else {
+            // without arguments
+            System.out.println("** No arguments specified. You can use --help for argument list. **");
+
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Address: ");
+            address = scanner.next();
+
+            System.out.print("Port (default: 17211): ");
+            port = scanner.nextInt();
 
 
-        System.out.print("Mirror width (default: 4): ");
-        int windowWidth = scanner.nextInt();
+            System.out.print("Mirror width (default: 4): ");
+            windowWidth = scanner.nextInt();
 
-        System.out.print("Mirror width (default: 3): ");
-        int windowHeight = scanner.nextInt();
+            System.out.print("Mirror width (default: 3): ");
+            windowHeight = scanner.nextInt();
+
+            System.out.print("Mirror ID: ");
+            id = (short) scanner.nextInt();
+
+            System.out.print("Password: ");
+            password = System.console() == null ? scanner.next() : String.valueOf(System.console().readPassword());
+        }
 
         Screen screen = new Screen(windowWidth * 128, windowHeight * 128);
-
-
-        System.out.print("Mirror ID: ");
-        short id = (short)scanner.nextInt();
-
-        System.out.print("Password: ");
-        String password = System.console() == null ? scanner.next() : String.valueOf(System.console().readPassword());
-
-        new Main(address, port, screen, id, password);
+        new Main(address, port, screen, id, password, screenshotRefreshInterval, mouseCoordinateRefreshInterval);
     }
 
-    Main(String address, int port, Screen screen, short id, String password) {
+    Main(String address, int port, Screen screen, short id, String password, long screenshotRefreshInterval, long mouseCoordinateRefreshInterval) {
         try {
             this.client = new UdpClient(InetAddress.getByName(address), port);
             this.timer = new Timer();
@@ -61,7 +117,7 @@ public class Main {
                     dataSender.sendScreen(screen);
                 }
             });
-            timer.schedule(screenShotTimer, 1, 500);
+            timer.schedule(screenShotTimer, 1, screenshotRefreshInterval);
 
             this.mouseTrackTimer = new MouseTrackTimer(screen, new BiConsumer<Screen, int[]>() {
                 @Override
@@ -69,7 +125,7 @@ public class Main {
                     dataSender.sendMouseCoordinates((short)onRemoteScreenCoordinates[0], (short)onRemoteScreenCoordinates[1]);
                 }
             });
-            timer.schedule(mouseTrackTimer, 1, 50);
+            timer.schedule(mouseTrackTimer, 1, mouseCoordinateRefreshInterval);
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
