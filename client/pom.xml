@@ -37,22 +37,8 @@
     </build>
 
     <repositories>
-        <repository>
-            <id>papermc-repo</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 </project>
