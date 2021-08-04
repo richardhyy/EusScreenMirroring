@@ -1,6 +1,7 @@
 # EusScreenMirroring
 **Casting Your Screen to Minecraft Server**
 
+
 ## Features
 - Customizable port(s) for receiving screencast
 - User-definable screen size
@@ -8,8 +9,14 @@
 - Password protection
 - _(WIP) Ban IP if failed verifying for too many times_
 
-## Screenshot
+
+## Client
+[Click here for client explanation](tree/master/client)
+
+
+## Demo
 ![Demo](image/demo_screenmirroring.gif)
+
 
 ## Commands
 
@@ -19,7 +26,6 @@
 | /screenmirroring get \<ID\> [PlayerName] [column(x)] [line(y)] | Get MapView for Mirror with specified ID                     | screenmirroring.user |
 | /screenmirroring list                                        | List all Mirrors created by executor with connection passcode | screenmirroring.user |
 | /screenmirroring connection                                  | Get the server’s connection information, i.e. UDP port       | screenmirroring.user |
-
 
 
 ## Permissions
