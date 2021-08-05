@@ -5,10 +5,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Represents the palette that map items use.
@@ -226,15 +228,31 @@ public final class MapPalette {
 
         ExecutorService executor = Executors.newFixedThreadPool(threads);
         byte[] result = new byte[image.getWidth() * image.getHeight()];
-        for (int i = 0; i < pixels.length; i++) {
-            int finalI = i;
+        int bytesPerThread = pixels.length / threads;
+        AtomicInteger completed = new AtomicInteger();
+        for (int i = 0; i < threads; i++) {
+            int threadIndex = i;
             executor.submit(() -> {
-                Byte cached = paletteCache.get(pixels[finalI]);
-                if (cached == null) {
-                    result[finalI] = matchColor(new Color(pixels[finalI], true));
-                    paletteCache.put(pixels[finalI], result[finalI]);
-                } else {
-                    result[finalI] = cached;
+                int byteLength = bytesPerThread;
+                if (threadIndex == threads - 1) {
+                    byteLength += pixels.length % bytesPerThread;
+                }
+
+                int startAt = threadIndex * bytesPerThread;
+                int[] toProcess = Arrays.copyOfRange(pixels, startAt, startAt + byteLength);
+
+//                System.out.println(String.format("T[%d] startAt = %d; length = %d  (cache size = %d)", threadIndex, startAt, byteLength, paletteCache.size()));
+
+                for (int _i = 0; _i < toProcess.length; _i++) {
+                    int color = toProcess[_i];
+                    Byte cached = paletteCache.get(color);
+                    if (cached == null) {
+                        result[_i + startAt] = matchColor(new Color(color, true));
+                        paletteCache.put(color, result[_i + startAt]);
+                    } else {
+                        result[_i + startAt] = cached;
+                    }
+                    completed.getAndIncrement();
                 }
             });
         }

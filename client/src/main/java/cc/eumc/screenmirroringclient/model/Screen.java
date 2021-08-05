@@ -5,8 +5,8 @@ import org.bukkit.map.MapPalette;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Screen {
     private byte[] flattenedPixels;
@@ -17,7 +17,7 @@ public class Screen {
     private float scaleY;
 
     private int threads;
-    private final Map<Integer, Byte> paletteCache = new HashMap<>();
+    private final Map<Integer, Byte> paletteCache = new ConcurrentHashMap<>();
 
     public Screen(int width, int height) {
         this.width = width;
