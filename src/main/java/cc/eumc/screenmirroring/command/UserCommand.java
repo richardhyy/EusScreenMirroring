@@ -34,17 +34,17 @@ public class UserCommand implements CommandExecutor, TabCompleter {
                     if (sender instanceof Player player) {
                         int width = 4;
                         int height = 3;
-                        if (args.length == 2) {
+                        if (args.length >= 2) {
                             try {
-                                width = Integer.parseInt(args[0]);
+                                width = Integer.parseInt(args[1]);
                             } catch (Exception ex) {
                                 sendMessage(sender, "§cError parsing width: " + ex.getMessage());
                                 return true;
                             }
                         }
-                        if (args.length == 3) {
+                        if (args.length >= 3) {
                             try {
-                                height = Integer.parseInt(args[1]);
+                                height = Integer.parseInt(args[2]);
                             } catch (Exception ex) {
                                 sendMessage(sender, "§cError parsing height: " + ex.getMessage());
                                 return true;
