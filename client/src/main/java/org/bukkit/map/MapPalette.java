@@ -5,6 +5,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the palette that map items use.
@@ -194,16 +198,63 @@ public final class MapPalette {
      */
     @Deprecated
     @NotNull
-    public static byte[] imageToBytes(@NotNull Image image) {
-        BufferedImage temp = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = temp.createGraphics();
-        graphics.drawImage(image, 0, 0, null);
-        graphics.dispose();
+    public static byte[] imageToBytes(@NotNull BufferedImage image) {
+        int[] pixels = new int[image.getWidth() * image.getHeight()];
+        image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
 
-        int[] pixels = new int[temp.getWidth() * temp.getHeight()];
-        temp.getRGB(0, 0, temp.getWidth(), temp.getHeight(), pixels, 0, temp.getWidth());
+        byte[] result = new byte[image.getWidth() * image.getHeight()];
+        for (int i = 0; i < pixels.length; i++) {
+            result[i] = matchColor(new Color(pixels[i], true));
+        }
+        return result;
+    }
 
-        byte[] result = new byte[temp.getWidth() * temp.getHeight()];
+    /**
+     * Convert an Image to a byte[] using the palette with multithreading and caching support.
+     * By Alan_Richard
+     *
+     * @param image The image to convert.
+     * @param threads Threads used.
+     * @param timeout Timeout for processing.
+     * @param paletteCache Cached Color-Byte map.
+     * @return A byte[] containing the pixels of the image.
+     * @throws InterruptedException Timeout
+     */
+    public static byte[] imageToBytesThreaded(@NotNull BufferedImage image, int threads, int timeout, Map<Integer, Byte> paletteCache) throws InterruptedException {
+        int[] pixels = new int[image.getWidth() * image.getHeight()];
+        image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        byte[] result = new byte[image.getWidth() * image.getHeight()];
+        for (int i = 0; i < pixels.length; i++) {
+            int finalI = i;
+            executor.submit(() -> {
+                Byte cached = paletteCache.get(pixels[finalI]);
+                if (cached == null) {
+                    result[finalI] = matchColor(new Color(pixels[finalI], true));
+                    paletteCache.put(pixels[finalI], result[finalI]);
+                } else {
+                    result[finalI] = cached;
+                }
+            });
+        }
+
+        executor.shutdown();
+        if (!executor.awaitTermination(timeout, TimeUnit.SECONDS)) {
+            throw new InterruptedException("Timed out");
+        }
+        return result;
+    }
+
+    /**
+     * Convert an array of pixels to the palette.
+     * By Alan_Richard
+     *
+     * @param pixels Pixels to convert.
+     * @return A byte[] containing the pixels of the image.
+     */
+    public static byte[] pixelsToBytes(int[] pixels) {
+        byte[] result = new byte[pixels.length];
         for (int i = 0; i < pixels.length; i++) {
             result[i] = matchColor(new Color(pixels[i], true));
         }

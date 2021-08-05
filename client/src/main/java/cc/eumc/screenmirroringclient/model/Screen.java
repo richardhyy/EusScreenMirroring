@@ -5,6 +5,8 @@ import org.bukkit.map.MapPalette;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Screen {
     private byte[] flattenedPixels;
@@ -14,10 +16,14 @@ public class Screen {
     private float scaleX;
     private float scaleY;
 
+    private int threads;
+    private final Map<Integer, Byte> paletteCache = new HashMap<>();
+
     public Screen(int width, int height) {
         this.width = width;
         this.height = height;
         this.flattenedPixels = new byte[height * width];
+        this.threads = Runtime.getRuntime().availableProcessors();
     }
 
     /**
@@ -29,6 +35,21 @@ public class Screen {
         if (scaleX == 1 && scaleY == 1) {
             this.screenshot = screenshot;
         } else {
+//            byte[] pixels = ((DataBufferByte) screenshot.getRaster().getDataBuffer()).getData();
+//            Mat matImg = new Mat(screenshot.getHeight(), screenshot.getWidth(), CvType.CV_8UC3);
+//            matImg.put(0, 0, pixels);
+//
+//            Mat resizeimage = new Mat();
+//            Size sz = new Size(width, height);
+//
+//            Imgproc.resize(matImg, resizeimage, sz);
+//
+//            Imgproc.cvtColor(matImg, matImg, Imgproc.COLOR_RGB2GRAY, 0);
+//
+//            BufferedImage gray = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+//
+//            byte[] data = ((DataBufferByte) gray.getRaster().getDataBuffer()).getData();
+//            matImg.get(0, 0, data);
             BufferedImage after = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             AffineTransform affineTransform = new AffineTransform();
             affineTransform.scale(scaleX, scaleY);
@@ -37,7 +58,11 @@ public class Screen {
             this.screenshot = after;
         }
 //        System.out.println("%d x %d".formatted(this.screenshot.getWidth(), this.screenshot.getHeight()));
-        this.flattenedPixels = MapPalette.imageToBytes(this.screenshot);
+        try {
+            this.flattenedPixels = MapPalette.imageToBytesThreaded(this.screenshot, Runtime.getRuntime().availableProcessors(), 10, paletteCache);
+        } catch (InterruptedException e) {
+            System.out.println("<!> Can't keep up!");
+        }
     }
 
     public void calculateScale(int originalWidth, int originalHeight) {

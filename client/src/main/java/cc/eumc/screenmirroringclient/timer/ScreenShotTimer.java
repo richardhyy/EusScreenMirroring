@@ -28,12 +28,21 @@ public class ScreenShotTimer extends TimerTask {
         }
         working = true;
 
+//        System.out.println("Stage 1");
+        long startTime = System.currentTimeMillis();
         Rectangle capture = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
         BufferedImage image = robot.createScreenCapture(capture);
+//        System.out.println("T = " + (System.currentTimeMillis() - startTime));
 
+//        System.out.println("Stage 2 start");
+        startTime = System.currentTimeMillis();
         screen.setScreenshot(image);
+//        System.out.println("T = " + (System.currentTimeMillis() - startTime));
 
+//        System.out.println("Stage 3 start");
+        startTime = System.currentTimeMillis();
         this.callback.accept(screen);
+//        System.out.println("T = " + (System.currentTimeMillis() - startTime));
         working = false;
     }
 
