@@ -2,7 +2,6 @@ package cc.eumc.screenmirroringclient.view;
 
 import cc.eumc.screenmirroringclient.SlidesClient;
 import cc.eumc.screenmirroringclient.model.Screen;
-import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,8 +21,8 @@ public class SlideshowView {
     public SlideshowView(SlidesClient slidesClient) {
         this.slidesClient = slidesClient;
 
-        // setup look and feel
-        FlatLightLaf.setup();
+//        // setup look and feel
+//        FlatLightLaf.setup();
 
         frame.setLayout(null);
         frame.setSize(slidesClient.getScreen().getWidth() / 2,slidesClient.getScreen().getHeight() / 2);
