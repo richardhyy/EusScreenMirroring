@@ -2,7 +2,7 @@ package cc.eumc.screenmirroringclient;
 
 import cc.eumc.screenmirroringclient.model.RemoteMirror;
 import cc.eumc.screenmirroringclient.model.Screen;
-import cc.eumc.screenmirroringclient.timer.MouseTrackTimer;
+import cc.eumc.screenmirroringclient.view.SlideshowView;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
@@ -16,14 +16,11 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
-import java.util.function.BiConsumer;
 
 public class SlidesClient {
     private UdpClient client;
     private Timer timer;
     private DataSender dataSender;
-
-    private MouseTrackTimer mouseTrackTimer;
 
     private Screen screen;
 
@@ -31,22 +28,16 @@ public class SlidesClient {
     private XMLSlideShow slideShow;
     private int currentPage;
     private byte[][] renderedPages;
+    private BufferedImage[] pagePreviews;
 
     public SlidesClient(String address, int port, Screen screen, short id, String password, File slidesFile, long mouseCoordinateRefreshInterval) {
         try {
             this.client = new UdpClient(InetAddress.getByName(address), port);
             this.timer = new Timer();
-            this.dataSender = new DataSender(client, new RemoteMirror(id, password));
+            this.dataSender = new DataSender(client, new RemoteMirror(id, password), false);
             dataSender.start();
 
             this.screen = screen;
-            this.mouseTrackTimer = new MouseTrackTimer(screen, new BiConsumer<Screen, int[]>() {
-                @Override
-                public void accept(Screen screen, int[] onRemoteScreenCoordinates) {
-                    dataSender.sendMouseCoordinates((short)onRemoteScreenCoordinates[0], (short)onRemoteScreenCoordinates[1]);
-                }
-            });
-            timer.schedule(mouseTrackTimer, 1, mouseCoordinateRefreshInterval);
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -60,6 +51,8 @@ public class SlidesClient {
             print(String.format("ERROR: %s", e.getMessage()));
             return;
         }
+
+        new SlideshowView(this);
 
         print("Done! Type `help` for command help.");
 
@@ -96,16 +89,9 @@ public class SlidesClient {
                 }
 
                 case "pause", "p" -> {
-                    mouseTrackTimer.setPaused(!mouseTrackTimer.isPaused());
-
-                    if (mouseTrackTimer.isPaused()) {
-                        dataSender.clearPending();
-                        dataSender.sendShowDisconnectScreen();
-
-                        print("Screen mirroring was paused, type `pause` again to unpause.");
-                    } else {
-                        print("Casting your screen.");
-                    }
+                    dataSender.clearPending();
+                    dataSender.sendShowDisconnectScreen();
+                    print("Disconnect screen sent.");
                 }
 
                 case "quit", "stop", "q" -> {
@@ -133,6 +119,7 @@ public class SlidesClient {
         this.slideShow = new XMLSlideShow(new FileInputStream(slidesFile));
         this.currentPage = 0;
         this.renderedPages = new byte[getTotalPages()][];
+        this.pagePreviews = new BufferedImage[renderedPages.length];
 
         Dimension dimension = slideShow.getPageSize();
         List<XSLFSlide> slides = slideShow.getSlides();
@@ -142,6 +129,7 @@ public class SlidesClient {
             slides.get(i).draw(graphics);
             screen.setScreenshot(img);
             renderedPages[i] = screen.getFlattenedPixels();
+            pagePreviews[i] = screen.getScreenshot();
         }
     }
 
@@ -155,6 +143,7 @@ public class SlidesClient {
             return;
         }
 
+        currentPage = page;
         screen.setFlattenedPixels(renderedPages[page]);
         dataSender.sendScreen(screen);
     }
@@ -181,6 +170,10 @@ public class SlidesClient {
         }
     }
 
+    public void setMouseLocation(short x, short y) {
+        dataSender.sendMouseCoordinates(x, y);
+    }
+
 
     public void print(String text, boolean newLine) {
         System.out.print(text);
@@ -205,5 +198,9 @@ public class SlidesClient {
 
     public int getTotalPages() {
         return slideShow.getSlides().size();
+    }
+
+    public BufferedImage[] getPagePreviews() {
+        return pagePreviews;
     }
 }

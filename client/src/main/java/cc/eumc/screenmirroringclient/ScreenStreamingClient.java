@@ -25,7 +25,7 @@ public class ScreenStreamingClient {
         try {
             this.client = new UdpClient(InetAddress.getByName(address), port);
             this.timer = new Timer();
-            this.dataSender = new DataSender(client, new RemoteMirror(id, password));
+            this.dataSender = new DataSender(client, new RemoteMirror(id, password), true);
             dataSender.start();
 
             this.screenShotTimer = new ScreenShotTimer(screen, new Consumer<Screen>() {

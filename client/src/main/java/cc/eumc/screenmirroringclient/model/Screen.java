@@ -66,4 +66,16 @@ public class Screen {
     public byte[] getFlattenedPixels() {
         return flattenedPixels;
     }
+
+    public BufferedImage getScreenshot() {
+        return screenshot;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }

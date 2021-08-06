@@ -17,10 +17,12 @@ public class DataSender extends Thread {
     private boolean clearing = false;
     private final Queue<byte[]> pendingData = new ConcurrentLinkedQueue<>();
     private final Map<Integer, byte[]> latestPixels = new HashMap<>();
+    private boolean incrementalUpdate;
 
-    public DataSender(UdpClient client, RemoteMirror mirror) {
+    public DataSender(UdpClient client, RemoteMirror mirror, boolean incrementalUpdate) {
         this.client = client;
         this.mirror = mirror;
+        this.incrementalUpdate = incrementalUpdate;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class DataSender extends Thread {
             } else {
                 byte[] lastPixels = latestPixels.get(i);
                 byte[] newPixels = Arrays.copyOfRange(pixels, startAt, Math.min(pixels.length, startAt + PacketBuilder.MAX_PIXEL_LENGTH));
-                if (lastPixels == null || !Arrays.equals(lastPixels, newPixels)) {
+                if (lastPixels == null || (!incrementalUpdate || !Arrays.equals(lastPixels, newPixels))) {
                     // Only send put pixel request when screen content changes
                     pendingData.add(PacketBuilder.createPutPixelPacket(mirror.getId(), mirror.getPassword(), startAt, newPixels));
                     latestPixels.put(i, newPixels);
