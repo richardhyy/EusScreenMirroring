@@ -26,6 +26,7 @@ public class Main {
             Optional arguments:
             --screenshotRefreshInterval      : Time interval between screenshot refreshes (in milliseconds)
             --mouseCoordinateRefreshInterval : Time interval between mouse location refreshes (in milliseconds)
+            --threads                        : Threads used for processing screenshots (default: -1, utilizing all available CPU threads)
             """;
 
     UdpClient client;
@@ -45,6 +46,7 @@ public class Main {
         String password;
         long screenshotRefreshInterval = 500;
         long mouseCoordinateRefreshInterval = 50;
+        int threads = -1;
 
         if (args.length > 0) {
             // with arguments
@@ -64,11 +66,15 @@ public class Main {
                 // optionals
                 String screenshotRefreshIntervalString = argumentParser.parse("--screenshotRefreshInterval");
                 String mouseCoordinateRefreshIntervalString = argumentParser.parse("--mouseCoordinateRefreshInterval");
+                String threadString = argumentParser.parse("--threads");
                 if (screenshotRefreshIntervalString != null) {
                     screenshotRefreshInterval = Long.parseLong(screenshotRefreshIntervalString);
                 }
                 if (mouseCoordinateRefreshIntervalString != null) {
                     mouseCoordinateRefreshInterval = Long.parseLong(mouseCoordinateRefreshIntervalString);
+                }
+                if (threadString != null) {
+                    threads = Integer.parseInt(threadString);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -100,7 +106,7 @@ public class Main {
             password = System.console() == null ? scanner.next() : String.valueOf(System.console().readPassword());
         }
 
-        Screen screen = new Screen(windowWidth * 128, windowHeight * 128);
+        Screen screen = new Screen(windowWidth * 128, windowHeight * 128, threads < 0 ? Runtime.getRuntime().availableProcessors() : threads);
         new Main(address, port, screen, id, password, screenshotRefreshInterval, mouseCoordinateRefreshInterval);
     }
 

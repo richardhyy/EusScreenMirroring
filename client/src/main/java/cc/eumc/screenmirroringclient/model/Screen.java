@@ -19,11 +19,11 @@ public class Screen {
     private int threads;
     private final Map<Integer, Byte> paletteCache = new ConcurrentHashMap<>();
 
-    public Screen(int width, int height) {
+    public Screen(int width, int height, int threads) {
         this.width = width;
         this.height = height;
         this.flattenedPixels = new byte[height * width];
-        this.threads = Runtime.getRuntime().availableProcessors();
+        this.threads = threads;
     }
 
     /**
@@ -44,7 +44,7 @@ public class Screen {
         }
 //        System.out.println("%d x %d".formatted(this.screenshot.getWidth(), this.screenshot.getHeight()));
         try {
-            this.flattenedPixels = MapPalette.imageToBytesThreaded(this.screenshot, Runtime.getRuntime().availableProcessors(), 10, paletteCache);
+            this.flattenedPixels = MapPalette.imageToBytesThreaded(this.screenshot, threads, 10, paletteCache);
         } catch (InterruptedException e) {
             System.out.println("<!> Can't keep up!");
         }
