@@ -3,6 +3,7 @@ package cc.eumc.screenmirroringclient;
 import cc.eumc.screenmirroringclient.model.Screen;
 import cc.eumc.screenmirroringclient.util.ArgumentParser;
 
+import java.io.File;
 import java.util.Scanner;
 
 public class Main {
@@ -13,6 +14,10 @@ public class Main {
             --height | -h  : Display window height
             --id | -i      : Mirror ID (Get by using /screenmirroring list)
             --password | -d: Mirror password (Get by using /screenmirroring list)
+            
+            Slideshow:
+            [Specify any of the following argument will enable slideshow mode (without streaming your screen)]
+            --pptx         : Path to Office Open XML file
             
             Optional arguments:
             --screenshotRefreshInterval      : Time interval between screenshot refreshes (in milliseconds)
@@ -31,6 +36,7 @@ public class Main {
         long screenshotRefreshInterval = 500;
         long mouseCoordinateRefreshInterval = 50;
         int threads = -1;
+        String pptx = null;
 
         if (args.length > 0) {
             // with arguments
@@ -60,6 +66,10 @@ public class Main {
                 if (threadString != null) {
                     threads = Integer.parseInt(threadString);
                 }
+
+                // slideshow mode
+                pptx = argumentParser.parse("--pptx");
+
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.printf("** Error parsing arguments, caused by %s **%n", e.getMessage());
@@ -90,7 +100,13 @@ public class Main {
             password = System.console() == null ? scanner.next() : String.valueOf(System.console().readPassword());
         }
 
+
         Screen screen = new Screen(windowWidth * 128, windowHeight * 128, threads < 0 ? Runtime.getRuntime().availableProcessors() : threads);
-        new ScreenStreamingClient(address, port, screen, id, password, screenshotRefreshInterval, mouseCoordinateRefreshInterval);
+
+        if (pptx == null) {
+            new ScreenStreamingClient(address, port, screen, id, password, screenshotRefreshInterval, mouseCoordinateRefreshInterval);
+        } else {
+            new SlidesClient(address, port, screen, id, password, new File(pptx), mouseCoordinateRefreshInterval);
+        }
     }
 }

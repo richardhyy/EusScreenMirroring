@@ -50,6 +50,10 @@ public class Screen {
         }
     }
 
+    public void setFlattenedPixels(byte[] pixels) {
+        flattenedPixels = pixels;
+    }
+
     public void calculateScale(int originalWidth, int originalHeight) {
         this.scaleX = (float)width / originalWidth;
         this.scaleY = (float)height / originalHeight;
