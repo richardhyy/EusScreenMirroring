@@ -20,8 +20,8 @@ public class PacketBuilder {
      * @param action
      * @return
      */
-    public static byte[] createBasePacket(short mirrorID, String password, byte action) {
-        byte[] data = new byte[1024];
+    public static byte[] createBasePacket(short mirrorID, String password, byte action, int dataLength) {
+        byte[] data = new byte[9 + dataLength];
         System.arraycopy(NumericUtil.shortToBytes(mirrorID), 0, data, 0, 2);
         System.arraycopy(password.getBytes(StandardCharsets.US_ASCII), 0, data, 2, 6);
         data[8] = action;
@@ -39,7 +39,7 @@ public class PacketBuilder {
      * @return
      */
     public static byte[] createPutPixelPacket(short mirrorID, String password, int startAt, byte[] pixels) {
-        byte[] data = createBasePacket(mirrorID, password, PUT_PIXELS);
+        byte[] data = createBasePacket(mirrorID, password, PUT_PIXELS, 6 + pixels.length);
         System.arraycopy(NumericUtil.intToBytes(startAt), 0, data, 9, 4);
         System.arraycopy(NumericUtil.shortToBytes((short) pixels.length), 0, data, 13, 2);
         System.arraycopy(pixels, 0, data, 15, pixels.length);
@@ -57,7 +57,7 @@ public class PacketBuilder {
      * @return
      */
     public static byte[] createMoveCursorPacket(short mirrorID, String password, short x, short y) {
-        byte[] data = createBasePacket(mirrorID, password, MOVE_CURSOR);
+        byte[] data = createBasePacket(mirrorID, password, MOVE_CURSOR, 4);
         System.arraycopy(NumericUtil.shortToBytes(x), 0, data, 9, 2);
         //noinspection SuspiciousNameCombination
         System.arraycopy(NumericUtil.shortToBytes(y), 0, data, 11, 2);
@@ -71,6 +71,6 @@ public class PacketBuilder {
      * @return
      */
     public static byte[] createShowDisconnectScreenPacket(short mirrorID, String password) {
-        return createBasePacket(mirrorID, password, SHOW_DISCONNECT_SCREEN);
+        return createBasePacket(mirrorID, password, SHOW_DISCONNECT_SCREEN, 0);
     }
 }
