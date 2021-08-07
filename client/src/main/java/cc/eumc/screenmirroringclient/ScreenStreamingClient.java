@@ -79,10 +79,19 @@ public class ScreenStreamingClient {
                 }
 
                 case "quit", "stop", "q" -> {
+                    print("Stopping...");
+
                     timer.cancel();
 
                     dataSender.clearPending();
-                    dataSender.sendShowDisconnectScreen();
+
+                    try {
+                        Thread.sleep(500);
+                        dataSender.sendShowDisconnectScreen();
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
                     System.exit(0);
                 }
