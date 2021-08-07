@@ -20,8 +20,8 @@ public class Main {
             --pptx         : Path to Office Open XML file
             
             Optional arguments:
-            --screenshotRefreshInterval      : Time interval between screenshot refreshes (in milliseconds)
-            --mouseCoordinateRefreshInterval : Time interval between mouse location refreshes (in milliseconds)
+            --screenshotRefreshInterval      : Time interval between screenshot refreshes (in milliseconds) (default: 250)
+            --mouseCoordinateRefreshInterval : Time interval between mouse location refreshes (in milliseconds) (default: 50)
             --threads                        : Threads used for processing screenshots (default: -1, utilizing all available CPU threads)
             """;
 
@@ -33,7 +33,7 @@ public class Main {
         int windowHeight;
         short id;
         String password;
-        long screenshotRefreshInterval = 500;
+        long screenshotRefreshInterval = 250;
         long mouseCoordinateRefreshInterval = 50;
         int threads = -1;
         String pptx = null;

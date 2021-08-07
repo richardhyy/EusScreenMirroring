@@ -55,7 +55,7 @@ public final class EusScreenMirroring extends JavaPlugin {
         pluginCommand.setExecutor(userCommand);
         pluginCommand.setTabCompleter(userCommand);
 
-        this.screenUpdateTask = getServer().getScheduler().runTaskTimerAsynchronously(this, new ScreenUpdateTask(mirrorManager), 20, 1);
+        this.screenUpdateTask = getServer().getScheduler().runTaskTimerAsynchronously(this, new ScreenUpdateTask(mirrorManager), 20, 0);
     }
 
     @Override

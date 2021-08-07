@@ -5,7 +5,7 @@
     <parent>
         <artifactId>eusscreenmirroring</artifactId>
         <groupId>cc.eumc</groupId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.github.richardhyy</groupId>
             <artifactId>EusMapDisplay</artifactId>
-            <version>1.0</version>
+            <version>1.0.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

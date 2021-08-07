@@ -29,6 +29,7 @@ public class ScreenUpdateTask implements Runnable {
                         display.setPixel(x, y, flatPixels[x + y * display.getWidth()]);
                     }
                 }
+                mirror.getMapDisplay().forceRender();
             }
         });
 
