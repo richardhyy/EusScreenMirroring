@@ -38,7 +38,7 @@ public class UserCommand implements CommandExecutor, TabCompleter {
                             try {
                                 width = Integer.parseInt(args[1]);
                             } catch (Exception ex) {
-                                sendMessage(sender, "§cError parsing width: " + ex.getMessage());
+                                sendMessage(sender, "&cError parsing width: " + ex.getMessage());
                                 return true;
                             }
                         }
@@ -46,7 +46,7 @@ public class UserCommand implements CommandExecutor, TabCompleter {
                             try {
                                 height = Integer.parseInt(args[2]);
                             } catch (Exception ex) {
-                                sendMessage(sender, "§cError parsing height: " + ex.getMessage());
+                                sendMessage(sender, "&cError parsing height: " + ex.getMessage());
                                 return true;
                             }
                         }
@@ -137,7 +137,7 @@ public class UserCommand implements CommandExecutor, TabCompleter {
     }
 
     private void sendMessage(CommandSender receiver, String message) {
-        receiver.sendMessage("[EusScreenMirroring] " + message);
+        receiver.sendMessage("[EusScreenMirroring] " + message.replace("&", "§"));
     }
 
     private void sendPlayerOnly(CommandSender receiver) {
