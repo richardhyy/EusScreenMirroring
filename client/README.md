@@ -6,6 +6,13 @@
 
 ## Start Mirroring
 You can specify connection parameters by either the two following ways.
+
+### 0) For macOS Users
+
+Grant `Terminal` with `Screen Recording` permission in `System Preferences → Security & Privacy → Privacy → Screen Recording`, or screen mirroring will not work properly.
+
+![Permission](image/macos_permission.png)
+
 ### 1) Commandline Arguments
 #### Arguments:
 ```
