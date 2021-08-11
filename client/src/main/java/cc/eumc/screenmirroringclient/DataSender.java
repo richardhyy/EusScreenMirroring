@@ -57,7 +57,7 @@ public class DataSender extends Thread {
                 byte[] newPixels = Arrays.copyOfRange(pixels, startAt, Math.min(pixels.length, startAt + PacketBuilder.MAX_PIXEL_LENGTH));
                 if (lastPixels == null || (!incrementalUpdate || !Arrays.equals(lastPixels, newPixels))) {
                     // Only send put pixel request when screen content changes
-                    pendingData.add(PacketBuilder.createPutPixelPacket(mirror.getId(), mirror.getPassword(), startAt, newPixels));
+                    queueDataPacket(PacketBuilder.createPutPixelPacket(mirror.getId(), mirror.getPassword(), startAt, newPixels));
                     latestPixels.put(i, newPixels);
                 }
             }
@@ -65,11 +65,15 @@ public class DataSender extends Thread {
     }
 
     public void sendMouseCoordinates(short x, short y) {
-        pendingData.add(PacketBuilder.createMoveCursorPacket(mirror.getId(), mirror.getPassword(), x, y));
+        queueDataPacket(PacketBuilder.createMoveCursorPacket(mirror.getId(), mirror.getPassword(), x, y));
     }
 
     public void sendShowDisconnectScreen() {
-        pendingData.add(PacketBuilder.createShowDisconnectScreenPacket(mirror.getId(), mirror.getPassword()));
+        queueDataPacket(PacketBuilder.createShowDisconnectScreenPacket(mirror.getId(), mirror.getPassword()));
+    }
+
+    private void queueDataPacket(byte[] data) {
+        pendingData.add(data);
     }
 
     public void clearPending() {
