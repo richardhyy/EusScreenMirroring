@@ -27,6 +27,9 @@ Slideshow:
 [Specify any of the following argument will enable slideshow mode (without streaming your screen)]
 --pptx         : Path to Office Open XML file
 
+Playback:
+--playback     : Path to EusScreenMirroring .rec file
+
 Optional arguments:
 --screenshotRefreshInterval      : Time interval between screenshot refreshes (in milliseconds) (default: 250)
 --mouseCoordinateRefreshInterval : Time interval between mouse location refreshes (in milliseconds) (default: 50)
@@ -74,8 +77,9 @@ Type `help` or `?` for command list.
 
 Currently, there are two commands available:
 ```
-pause(p): (Un)pause screen mirroring
-quit(q):  Request server showing disconnect screen and then exit
+pause(p) : (Un)pause screen mirroring
+record(r): Start/stop recording screen mirroring
+quit(q)  :  Request server showing disconnect screen and then exit
 ```
 
 ### Pause / Unpause
