@@ -96,18 +96,19 @@ public class SlidesClient {
                 }
 
                 case "record", "r" -> {
-                    if (dataSender.getPacketRecorder() != null) {
+                    if (dataSender.getPacketRecorder() == null) {
                         try {
-                            dataSender.getPacketRecorder().close();
-                            print(String.format("Recording stopped and saved to %s", dataSender.getPacketRecorder().getRecordFile().toPath()));
-                            dataSender.setPacketRecorder(null);
+                            dataSender.setPacketRecorder(PacketRecorder.createPacketRecorder(new File("SlideshowRecordings")));
+                            sendPage(currentPage); // resend current screen, or the page on screen will not be recorded
+                            print("Packet recorder started. Type `record` again to stop and save.");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
                         try {
-                            dataSender.setPacketRecorder(PacketRecorder.createPacketRecorder(new File("SlideshowRecordings")));
-                            print("Packet recorder started. Type `record` again to stop and save.");
+                            dataSender.getPacketRecorder().close();
+                            print(String.format("Recording stopped and saved to %s", dataSender.getPacketRecorder().getRecordFile().toPath()));
+                            dataSender.setPacketRecorder(null);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
