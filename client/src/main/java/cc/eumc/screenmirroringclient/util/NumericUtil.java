@@ -18,4 +18,12 @@ public class NumericUtil {
     public static int bytesToInt(byte[] fourBytes) {
         return ByteBuffer.wrap(fourBytes).getInt();
     }
+
+    public static byte[] longToBytes(long x) {
+        return ByteBuffer.allocate(8).putLong(x).array();
+    }
+
+    public static long bytesToLong(byte[] eightBytes) {
+        return ByteBuffer.wrap(eightBytes).getLong();
+    }
 }

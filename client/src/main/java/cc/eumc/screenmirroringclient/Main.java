@@ -37,6 +37,7 @@ public class Main {
         long mouseCoordinateRefreshInterval = 50;
         int threads = -1;
         String pptx = null;
+        File playbackRecordFile = null;
 
         if (args.length > 0) {
             // with arguments
@@ -45,6 +46,16 @@ public class Main {
                 System.out.println(Main.HelpText);
                 return;
             }
+
+            String playbackRecordPathString = argumentParser.parse("--playback");
+            if (playbackRecordPathString != null) {
+                playbackRecordFile = new File(playbackRecordPathString);
+                if (!playbackRecordFile.exists()) {
+                    System.err.printf("%s not found.%n", playbackRecordPathString);
+                    return;
+                }
+            }
+
             try {
                 address = argumentParser.parse("--address", "-a");
                 port = Integer.parseInt(argumentParser.parse("--port", "-p"));
@@ -103,10 +114,13 @@ public class Main {
 
         Screen screen = new Screen(windowWidth * 128, windowHeight * 128, threads < 0 ? Runtime.getRuntime().availableProcessors() : threads);
 
-        if (pptx == null) {
-            new ScreenStreamingClient(address, port, screen, id, password, screenshotRefreshInterval, mouseCoordinateRefreshInterval);
-        } else {
+        if (pptx != null) {
             new SlidesClient(address, port, screen, id, password, new File(pptx), mouseCoordinateRefreshInterval);
+        } else if (playbackRecordFile != null) {
+            new PlaybackClient(address, port, id, password, playbackRecordFile);
+        }
+        else {
+            new ScreenStreamingClient(address, port, screen, id, password, screenshotRefreshInterval, mouseCoordinateRefreshInterval);
         }
     }
 }

@@ -2,6 +2,7 @@ package cc.eumc.screenmirroringclient;
 
 import cc.eumc.screenmirroringclient.model.RemoteMirror;
 import cc.eumc.screenmirroringclient.model.Screen;
+import cc.eumc.screenmirroringclient.playback.PacketRecorder;
 import cc.eumc.screenmirroringclient.view.SlideshowView;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
@@ -94,6 +95,25 @@ public class SlidesClient {
                     print("Disconnect screen sent.");
                 }
 
+                case "record", "r" -> {
+                    if (dataSender.getPacketRecorder() != null) {
+                        try {
+                            dataSender.getPacketRecorder().close();
+                            print(String.format("Recording stopped and saved to %s", dataSender.getPacketRecorder().getRecordFile().toPath()));
+                            dataSender.setPacketRecorder(null);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            dataSender.setPacketRecorder(PacketRecorder.createPacketRecorder(new File("SlideshowRecordings")));
+                            print("Packet recorder started. Type `record` again to stop and save.");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
                 case "quit", "stop", "q" -> {
                     timer.cancel();
 
@@ -108,6 +128,7 @@ public class SlidesClient {
                     print("previous(v):  Previous slide");
                     print("goto(g)    :  Goto page");
                     print("pause(p)   :  Show/hide disconnect screen");
+                    print("record(r)  :  Start/stop recording slideshow");
                     print("quit(q)    :  Request server showing disconnect screen and then exit");
                 }
             }

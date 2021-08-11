@@ -2,10 +2,13 @@ package cc.eumc.screenmirroringclient;
 
 import cc.eumc.screenmirroringclient.model.RemoteMirror;
 import cc.eumc.screenmirroringclient.model.Screen;
+import cc.eumc.screenmirroringclient.playback.PacketRecorder;
 import cc.eumc.screenmirroringclient.timer.MouseTrackTimer;
 import cc.eumc.screenmirroringclient.timer.ScreenShotTimer;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -78,6 +81,25 @@ public class ScreenStreamingClient {
                     }
                 }
 
+                case "record", "r" -> {
+                    if (dataSender.getPacketRecorder() != null) {
+                        try {
+                            dataSender.getPacketRecorder().close();
+                            print(String.format("Recording stopped and saved to %s", dataSender.getPacketRecorder().getRecordFile().toPath()));
+                            dataSender.setPacketRecorder(null);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            dataSender.setPacketRecorder(PacketRecorder.createPacketRecorder(new File("ScreenRecordings")));
+                            print("Packet recorder started. Type `record` again to stop and save.");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
                 case "quit", "stop", "q" -> {
                     print("Stopping...");
 
@@ -97,8 +119,9 @@ public class ScreenStreamingClient {
                 }
 
                 case "help", "?" -> {
-                    print("pause(p): (Un)pause screen mirroring");
-                    print("quit(q):  Request server showing disconnect screen and then exit");
+                    print("pause(p) : (Un)pause screen mirroring");
+                    print("record(r): Start/stop recording screen mirroring");
+                    print("quit(q)  : Request server showing disconnect screen and then exit");
                 }
             }
         }

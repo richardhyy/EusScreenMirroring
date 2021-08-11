@@ -2,6 +2,7 @@ package cc.eumc.screenmirroringclient;
 
 import cc.eumc.screenmirroringclient.model.RemoteMirror;
 import cc.eumc.screenmirroringclient.model.Screen;
+import cc.eumc.screenmirroringclient.playback.PacketRecorder;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,6 +19,8 @@ public class DataSender extends Thread {
     private final Queue<byte[]> pendingData = new ConcurrentLinkedQueue<>();
     private final Map<Integer, byte[]> latestPixels = new HashMap<>();
     private boolean incrementalUpdate;
+
+    private PacketRecorder packetRecorder = null;
 
     public DataSender(UdpClient client, RemoteMirror mirror, boolean incrementalUpdate) {
         this.client = client;
@@ -72,8 +75,12 @@ public class DataSender extends Thread {
         queueDataPacket(PacketBuilder.createShowDisconnectScreenPacket(mirror.getId(), mirror.getPassword()));
     }
 
-    private void queueDataPacket(byte[] data) {
+    public void queueDataPacket(byte[] data) {
         pendingData.add(data);
+
+        if (packetRecorder != null) {
+            packetRecorder.write(data);
+        }
     }
 
     public void clearPending() {
@@ -84,5 +91,13 @@ public class DataSender extends Thread {
 
     public void stopSending() {
         running = false;
+    }
+
+    public PacketRecorder getPacketRecorder() {
+        return packetRecorder;
+    }
+
+    public void setPacketRecorder(PacketRecorder packetRecorder) {
+        this.packetRecorder = packetRecorder;
     }
 }
