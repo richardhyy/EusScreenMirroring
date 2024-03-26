@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-bridge</artifactId>
-            <version>1.11</version>
+            <version>1.17</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
